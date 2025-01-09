@@ -28,7 +28,7 @@ class BasisState:
         self.data = {}
 
     def __repr__(self):
-        return '{} state_id={self.state_id!r} label={self.label!r} prob={self.probability!r} pcoord={self.pcoord!r}>'.format(
+        return '{} state_id={self.state_id!s} label={self.label!s} prob={self.probability!s} pcoord={self.pcoord!s}>'.format(
             object.__repr__(self)[:-1], self=self
         )
 
@@ -99,7 +99,7 @@ class BasisState:
             try:
                 probability = float(fields[1])
             except ValueError:
-                raise ValueError('invalid probability ({!r}) {} line {:d}'.format(fields[1], statefile, lineno))
+                raise ValueError('invalid probability ({!s}) {} line {:d}'.format(fields[1], statefile, lineno))
 
             try:
                 auxref = fields[2].strip()
@@ -201,7 +201,7 @@ class InitialState:
         self.data = {}
 
     def __repr__(self):
-        return '{} state_id={self.state_id!r} istate_type={self.istate_type!r} basis_state_id={self.basis_state_id!r} iter_created={self.iter_created!r} pcoord={self.pcoord!r}>'.format(
+        return '{} state_id={self.state_id!s} istate_type={self.istate_type!s} basis_state_id={self.basis_state_id!s} iter_created={self.iter_created!s} pcoord={self.pcoord!s}>'.format(
             object.__repr__(self)[:-1], self=self
         )
 
@@ -263,7 +263,7 @@ class TargetState:
         self.state_id = state_id
 
     def __repr__(self):
-        return '{} state_id={self.state_id!r} label={self.label!r} pcoord={self.pcoord!r}>'.format(
+        return '{} state_id={self.state_id!s} label={self.label!s} pcoord={self.pcoord!s}>'.format(
             object.__repr__(self)[:-1], self=self
         )
 
