@@ -147,8 +147,10 @@ class RectilinearBinMapper(BinMapper):
         binspace_shape = tuple(self._boundlens[:] - 1)
         for index in np.ndindex(binspace_shape):
             bounds = [
-                (_boundaries[idim][index[idim]].tolist(), boundaries[idim][index[idim] + 1]) for idim in range(len(_boundaries))
+                (float(str(_boundaries[idim][index[idim]])), float(str(boundaries[idim][index[idim] + 1])))
+                for idim in range(len(_boundaries))
             ]
+            print(repr(bounds))
             labels.append(str(bounds))
 
     def assign(self, coords, mask=None, output=None):

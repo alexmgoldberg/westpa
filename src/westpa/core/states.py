@@ -43,7 +43,7 @@ class BasisState:
         max_auxref_len = max(8, max(len(state.auxref or '') for state in states))
         fmt = (
             '{state.label:<{max_label_len}s}    {state.probability:12.7g}    {auxref_str:<{max_auxref_len}s}'
-            '    # state_id={state_id_str:s}    pcoord={pcoord_str}\n'
+            '    # state_id={state_id_str:s}    pcoord={pcoord_str:s}\n'
         )
         fileobj.write(
             '# {:{max_label_len}s}    {:>12s}    {:{max_auxref_len}s}\n'.format(
@@ -52,7 +52,7 @@ class BasisState:
         )
         for state in states:
             state_id_str = str(state.state_id) if state.state_id is not None else 'None'
-            pcoord_str = str(list(state.pcoord))
+            pcoord_str = str(state.pcoord.tolist())
             auxref_str = 'None' if state.auxref == b'' or state.auxref == "b''" else str(state.auxref)
             fileobj.write(
                 fmt.format(
