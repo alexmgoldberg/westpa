@@ -60,7 +60,7 @@ class TestPiecewiseBinMapper:
         fr1 = lambda x: x < 0
         fr2 = lambda x: x >= 0
         pm = PiecewiseBinMapper([fr1, fr2])
-        assert list(pm.assign(coords)) == [0, 1, 1]
+        assert pm.assign(coords).tolist() == [0, 1, 1]
 
 
 class TestFuncBinMapper:
@@ -76,7 +76,7 @@ class TestFuncBinMapper:
         print(repr(coords))
         output = mapper.assign(coords)
         print(repr(output))
-        assert list(output) == [0, 0, 0, 1]
+        assert output.tolist() == [0, 0, 0, 1]
 
 
 class TestVectorizingFuncBinMapper:
@@ -92,7 +92,7 @@ class TestVectorizingFuncBinMapper:
         coords = np.array([0.0, 0.1, 0.5, 0.7])
         coords.shape = (coords.shape[0], 1)
         output = mapper.assign(coords)
-        assert list(output) == [0, 0, 0, 1]
+        assert output.tolist() == [0, 0, 0, 1]
 
 
 class TestVoronoiBinMapper:
@@ -111,7 +111,7 @@ class TestVoronoiBinMapper:
 
         mapper = VoronoiBinMapper(self.distfunc, centers)
         output = mapper.assign(coords)
-        assert list(output) == [0, 1, 0, 1]
+        assert output.tolist() == [0, 1, 0, 1]
 
 
 class TestNestingBinMapper:
@@ -165,7 +165,7 @@ class TestNestingBinMapper:
         rmapper = RecursiveBinMapper(mapper)
         coords = np.array([[0.1], [0.2], [0.3], [0.4], [0.6], [1.1]])
         output = rmapper.assign(coords)
-        assert list(output) == [0, 0, 0, 0, 0, 1]
+        assert output.tolist() == [0, 0, 0, 0, 0, 1]
 
     def testOuterMapperWithOffset(self):
         '''
@@ -179,7 +179,7 @@ class TestNestingBinMapper:
         rmapper = RecursiveBinMapper(mapper, 1)
         coords = np.array([[0.1], [0.2], [0.3], [0.4], [0.6], [1.1]])
         output = rmapper.assign(coords)
-        assert list(output) == [1, 1, 1, 1, 1, 2]
+        assert output.tolist() == [1, 1, 1, 1, 1, 2]
 
     def testSingleRecursion(self):
         '''
@@ -202,7 +202,7 @@ class TestNestingBinMapper:
         assert rmapper.nbins == 3
         coords = np.array([[0.1], [0.2], [0.3], [0.4], [0.6], [1.1]])
         output = rmapper.assign(coords)
-        assert list(output) == [1, 1, 1, 1, 2, 0]
+        assert output.tolist() == [1, 1, 1, 1, 2, 0]
 
     def testDeepRecursion(self):
         '''
@@ -229,7 +229,7 @@ class TestNestingBinMapper:
         assert rmapper.nbins == 4
         coords = np.array([[0.1], [0.2], [0.3], [0.4], [0.6], [1.1]])
         output = rmapper.assign(coords)
-        assert list(output) == [2, 2, 3, 3, 1, 0]
+        assert output.tolist() == [2, 2, 3, 3, 1, 0]
 
     def testSideBySideRecursion(self):
         '''
@@ -256,7 +256,7 @@ class TestNestingBinMapper:
         coords = np.array([[0.1], [0.2], [0.3], [0.4], [0.6], [1.1], [1.6]])
         output = rmapper.assign(coords)
         print('OUTPUT', output)
-        assert list(output) == [0, 0, 0, 0, 1, 2, 3]
+        assert output.tolist() == [0, 0, 0, 0, 1, 2, 3]
 
     def testMegaComplexRecursion(self):
         '''
@@ -284,7 +284,7 @@ class TestNestingBinMapper:
         assert rmapper.nbins == 5
         coords = np.array([[0.1], [0.2], [0.3], [0.4], [0.6], [1.1], [1.6]])
         output = rmapper.assign(coords)
-        assert list(output) == [1, 1, 2, 2, 0, 3, 4]
+        assert output.tolist() == [1, 1, 2, 2, 0, 3, 4]
 
     # TODO: Fix this test
     @pytest.mark.xfail(reason="known error in assign")
@@ -482,7 +482,7 @@ class TestMABBinMapper:
         allcoords = self.input_mab_data['allcoords_2d_grid']
         N_total = allcoords.shape[0] // 2
         mask = np.full((N_total * 2), True)
-        output = np.zeros((N_total * 2), dtype=int)
+        output = np.zeros((N_total * 2), dtype=np.uint32)
         output = map_mab(
             coords=allcoords,
             mask=mask,
@@ -515,7 +515,7 @@ class TestMABBinMapper:
         allcoords = self.input_mab_data['allcoords_3d_grid']
         N_total = allcoords.shape[0] // 2
         mask = np.full((N_total * 2), True)
-        output = list(np.zeros((N_total * 2), dtype=int))
+        output = np.zeros((N_total * 2), dtype=np.uint32).tolist()
         output = map_mab(
             coords=allcoords,
             mask=mask,
@@ -526,8 +526,8 @@ class TestMABBinMapper:
             skip=skip,
         )
         assert output[:N_total] == output[N_total:], "Expected first half of bin assignments to equal second half"
-        assert output == list(
-            self.ref_mab_results['3d_grid'][ref_index]
+        assert (
+            output == self.ref_mab_results['3d_grid'][ref_index].tolist()
         ), f"Unexpected 3D grid MAB bin assignments with direction={direction}, bottleneck={bottleneck}, and skip={skip}"
 
     @pytest.mark.parametrize(
@@ -550,7 +550,7 @@ class TestMABBinMapper:
         allcoords = self.input_mab_data['allcoords_2d_gauss']
         N_total = allcoords.shape[0] // 2
         mask = np.full((N_total * 2), True)
-        output = np.zeros((N_total * 2), dtype=int)
+        output = np.zeros((N_total * 2), dtype=np.uint32)
         output = map_mab(
             coords=allcoords,
             mask=mask,
@@ -600,7 +600,7 @@ def output_mab_reference():
             allcoords = input_data['allcoords_2d_grid']
             N_total = allcoords.shape[0] // 2
             mask = np.full((N_total * 2), True)
-            output = np.zeros((N_total * 2), dtype=int)
+            output = np.zeros((N_total * 2), dtype=np.uint32)
             output = map_mab(
                 coords=allcoords,
                 mask=mask,
@@ -642,7 +642,7 @@ def output_mab_reference():
             allcoords = input_data['allcoords_3d_grid']
             N_total = allcoords.shape[0] // 2
             mask = np.full((N_total * 2), True)
-            output = np.zeros((N_total * 2), dtype=int)
+            output = np.zeros((N_total * 2), dtype=np.uint32)
             output = map_mab(
                 coords=allcoords,
                 mask=mask,
@@ -666,7 +666,7 @@ def output_mab_reference():
             allcoords = input_data['allcoords_2d_gauss']
             N_total = allcoords.shape[0] // 2
             mask = np.full((N_total * 2), True)
-            output = np.zeros((N_total * 2), dtype=int)
+            output = np.zeros((N_total * 2), dtype=np.uint32)
             output = map_mab(
                 coords=allcoords,
                 mask=mask,
