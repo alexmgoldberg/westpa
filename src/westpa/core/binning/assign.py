@@ -132,7 +132,7 @@ class RectilinearBinMapper(BinMapper):
     def boundaries(self, boundaries):
         del self._boundaries, self.labels
         self._boundaries = []
-        self.labels = labels = []
+        self.labels = []
         for boundset in boundaries:
             boundarray = np.ascontiguousarray(boundset, dtype=coord_dtype)
             db = np.diff(boundarray)
@@ -146,12 +146,14 @@ class RectilinearBinMapper(BinMapper):
         _boundaries = self._boundaries
         binspace_shape = tuple(self._boundlens[:] - 1)
         for index in np.ndindex(binspace_shape):
-            bounds = [
-                (float(str(_boundaries[idim][index[idim]])), float(str(boundaries[idim][index[idim] + 1])))
-                for idim in range(len(_boundaries))
-            ]
-            print(repr(bounds))
-            labels.append(str(bounds))
+            label = (
+                '['
+                + ', '.join(
+                    f'({boundarray[index[idim]]!s}, {boundarray[index[idim] + 1]!s})' for idim, boundarray in enumerate(_boundaries)
+                )
+                + ']'
+            )
+            self.labels.append(label)
 
     def assign(self, coords, mask=None, output=None):
         try:
